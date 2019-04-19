@@ -11,6 +11,7 @@ import io.mitter.models.mardle.messaging.Message
 import io.mitter.models.mardle.messaging.StandardPayloadTypeNames
 import io.mitter.models.mardle.messaging.StandardTimelineEventTypeNames
 import io.mitter.models.mardle.messaging.TimelineEvent
+import kotlinx.android.synthetic.main.item_image_message_other.view.*
 import kotlinx.android.synthetic.main.item_image_message_self.view.*
 import kotlinx.android.synthetic.main.item_message_other.view.*
 import kotlinx.android.synthetic.main.item_message_self.view.*
@@ -25,12 +26,13 @@ class ChatRecyclerViewAdapter(
     private val MESSAGE_SELF_VIEW = 0
     private val MESSAGE_OTHER_VIEW = 1
     private val MESSAGE_SELF_IMAGE_VIEW = 2
-    private val MESSAGE_OTHER_IMAGE_VIEW = 2
+    private val MESSAGE_OTHER_IMAGE_VIEW = 3
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layoutId = when (viewType) {
             MESSAGE_SELF_VIEW -> R.layout.item_message_self
             MESSAGE_SELF_IMAGE_VIEW -> R.layout.item_image_message_self
+            MESSAGE_OTHER_IMAGE_VIEW -> R.layout.item_image_message_other
             else -> R.layout.item_message_other
         }
         val itemView = LayoutInflater.from(parent.context).inflate(layoutId, parent, false)
@@ -69,7 +71,17 @@ class ChatRecyclerViewAdapter(
                         itemView?.selfMessageCaption?.text = textPayload
                     }
                 } else {
-                    itemView?.otherMessageText?.text = textPayload
+                    if (payloadType == StandardPayloadTypeNames.TextMessage) {
+                        itemView?.otherMessageText?.text = textPayload
+                    } else {
+                        val remoteImage = objectMapper.treeToValue(messageData[0].data, RemoteImage::class.java)
+
+                        Glide.with(itemView.context)
+                            .load(getRemoteImagePath(remoteImage))
+                            .centerCrop()
+                            .into(itemView.otherMessageImage)
+                        itemView?.otherMessageCaption?.text = textPayload
+                    }
                 }
             }
         }
