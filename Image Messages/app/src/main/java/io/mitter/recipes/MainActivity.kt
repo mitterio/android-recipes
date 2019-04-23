@@ -17,7 +17,7 @@ import android.util.Log
 class MainActivity : AppCompatActivity() {
     private val IMAGE_PICKER_CODE = 123
 
-    private val channelId = "662bec70-626e-11e9-b3d5-414919245173"
+    private val channelId = "cf4a4b80-65a6-11e9-abaa-5750cb139a6a"
     private val messageList: MutableList<Message> = mutableListOf()
     private lateinit var chatRecyclerViewAdapter: ChatRecyclerViewAdapter
     private lateinit var mitter: Mitter
